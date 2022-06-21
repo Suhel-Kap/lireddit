@@ -6,9 +6,7 @@ import { MyContext } from "../types";
 @Resolver()
 export default class PostResolver {
     @Query(() => [Post])
-    posts(
-        @Ctx() { em }: MyContext
-    ) {
+    posts(@Ctx() { em }: MyContext) {
         return em.find(Post, {});
     }
 
@@ -26,40 +24,40 @@ export default class PostResolver {
         @Ctx() { em }: MyContext
     ): Promise<Post> {
         const post = em.create(Post, {
-            title
+            title,
         } as RequiredEntityData<Post>);
         await em.persistAndFlush(post);
         return post;
     }
-    
+
     @Mutation(() => Post, { nullable: true })
     async updatePost(
         @Arg("_id") _id: number,
         @Arg("title", () => String) title: string, // @Arg("title", () => String, {nullable: true}) if you want to keep some itesms as optional
         @Ctx() { em }: MyContext
     ): Promise<Post | null> {
-        const post = await em.findOne(Post, {_id})
-        if(!post){
-            return null
+        const post = await em.findOne(Post, { _id });
+        if (!post) {
+            return null;
         }
-        if(typeof title !== undefined){
-            post.title = title
-            await em.persistAndFlush(post)
+        if (typeof title !== undefined) {
+            post.title = title;
+            await em.persistAndFlush(post);
         }
         return post;
     }
-    
+
     @Mutation(() => Boolean)
     async deletePost(
         @Arg("_id") _id: number,
         @Ctx() { em }: MyContext
     ): Promise<boolean> {
         try {
-            await em.nativeDelete(Post, {_id})
+            await em.nativeDelete(Post, { _id });
         } catch (err) {
-            console.error(err)
-            return false
+            console.error(err);
+            return false;
         }
-        return true
+        return true;
     }
 }

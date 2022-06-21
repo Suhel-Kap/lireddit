@@ -4,23 +4,22 @@ import { Field, ObjectType } from "type-graphql";
 @ObjectType()
 @Entity()
 export class User {
+    @Field() // field exposes database columns to graphql
+    @PrimaryKey()
+    _id!: number;
 
-  @Field() // field exposes database columns to graphql
-  @PrimaryKey()
-  _id!: number;
+    @Field(() => String)
+    @Property({ type: "date" })
+    createdAt = new Date();
 
-  @Field(() => String)
-  @Property({type: 'date'})
-  createdAt = new Date();
+    @Field(() => String)
+    @Property({ type: "date", onUpdate: () => new Date() })
+    updatedAt = new Date();
 
-  @Field(() => String)
-  @Property({ type: 'date', onUpdate: () => new Date() })
-  updatedAt = new Date();
+    @Field()
+    @Property({ type: "text", unique: true })
+    username!: string;
 
-  @Field()
-  @Property({ type: 'text', unique: true })
-  username!: string;
-  
-  @Property({ type: 'text'}) // not setting @Field here to not expose it
-  password!: string;
+    @Property({ type: "text" }) // not setting @Field here to not expose it
+    password!: string;
 }
